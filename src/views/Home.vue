@@ -28,6 +28,7 @@
 // import HelloWorld from '@/components/HelloWorld.vue'
 
 import axios from 'axios';
+import {mapMutations} from 'vuex'
 
 export default {
  data() {
@@ -39,13 +40,17 @@ export default {
    }
   },
   methods: {
+    ...mapMutations(['mostrarLoading', 'ocultarLoading']),
+
     async getDolar(dia) {
       let arrayFecha = dia.split(['-'])
       let ddmmyy = arrayFecha[2]+'-'+arrayFecha[1]+'-'+arrayFecha[0]
 
       try {
 
-         let datos = await axios.get(`https://mindicador.cl/api/dolar/${ddmmyy}`);
+        this.mostrarLoading({titulo: 'Accediendo a informacion', color: 'secondary'})
+
+        let datos = await axios.get(`https://mindicador.cl/api/dolar/${ddmmyy}`);
 
         if (datos.data.serie.length > 0) {
           this.valor = await datos.data.serie[0].valor;
@@ -57,7 +62,7 @@ export default {
         console.log(error)
       }
       finally {
-
+        this.ocultarLoading()
       }
 
      
